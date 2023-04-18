@@ -1,47 +1,22 @@
-self.addEventListener('push', (event) => {
-    console.log('Push received:', event);
-    let data = { title: 'Push notification' };
+self.addEventListener('push', function (event) {
     if (event.data) {
-        data = JSON.parse(event.data.text());
+        console.log('Push notification received: ', event.data.text());
+
+        event.waitUntil(
+            self.registration.showNotification('FCM Push Notification', {
+                body: event.data.text(),
+                icon: 'icons/icon-144x144',
+            })
+        );
+    } else {
+        console.log('Push notification received but no payload.');
     }
-
-    const options = {
-        body: data.body,
-        icon: '/images/icon-192x192.png',
-        badge: '/images/badge-72x72.png',
-        data: {
-            url: data.url,
-        },
-    };
-
-    event.waitUntil(self.registration.showNotification(data.title, options));
 });
 
-self.addEventListener('notificationclick', (event) => {
-    console.log('Notification clicked:', event);
-
+self.addEventListener('notificationclick', function (event) {
     event.notification.close();
 
-    if (event.action === 'close') {
-        return;
-    }
-
-    const url = event.notification.data.url;
-    event.waitUntil(clients.openWindow(url));
-});
-
-self.addEventListener('pushsubscriptionchange', async (event) => {
-    console.log('Push subscription change:', event);
-
-    const subscription = await self.registration.pushManager.getSubscription();
-    if (subscription) {
-        const response = await fetch('/subscribe', {
-            method: 'POST',
-            body: JSON.stringify(subscription),
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        console.log('Subscription updated:', response);
-    }
+    event.waitUntil(
+        clients.openWindow('http://127.0.0.1:5500/')
+    );
 });
