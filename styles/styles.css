@@ -1,0 +1,17 @@
+.container {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#subscribes {
+    height: 80px;
+    width: 200px;
+    background-color: black;
+    color: white;
+    border: 1px;
+    border-radius: 500px;
+    font-size: 24px;
+}
